@@ -62,23 +62,41 @@ Type stringToNum(const string& str)
 class Vector3
 {
 public:
+	Vector3();
 	Vector3(float x, float y, float z);
 	Vector3(float beginPoint[3], float endPoint[3]);
-	float X, Y, Z, Length; //坐标及模长
+	Vector3(float point[3]);
+	float x, y, z, length; //坐标及模长
+
+private:
+	void Length()
+	{
+		length = sqrt(x * x + y * y + z * z);
+	}
 };
+//无参数构造函数
+Vector3::Vector3()
+{
+
+}
 
 //用坐标构造向量
-Vector3::Vector3(float x, float y, float z) :X(x), Y(y), Z(z)
+Vector3::Vector3(float _x, float _y, float _z) :x(_x), y(_y), z(_z)
 {
-	Length = sqrt(X * X + Y * Y + Z * Z);
+	Length();
 }
 //用起始点构造向量
 Vector3::Vector3(float beginPoint[3], float endPoint[3])
 {
-	X = endPoint[0] - beginPoint[0];
-	Y = endPoint[1] - beginPoint[1];
-	Z = endPoint[2] - beginPoint[2];
-	Length = sqrt(X * X + Y * Y + Z * Z);
+	x = endPoint[0] - beginPoint[0];
+	y = endPoint[1] - beginPoint[1];
+	z = endPoint[2] - beginPoint[2];
+	Length();
+}
+//点坐标
+Vector3::Vector3(float point[3]) :x(point[0]), y(point[1]), z(point[2])
+{
+	length = 0;
 }
 
 class Input
@@ -159,7 +177,6 @@ class Vertex
 {
 public:
 	float intersection[6][3]; //交点
-							  //enum intsectArea { pX, X, nX}; //平面方程与边界面相交的区域：+X面、平行与X的棱、-X面
 	int counter = 0; //记录有效交点数量
 	int findIntersections(float coefficients[4])
 	{
@@ -217,9 +234,39 @@ private:
 			inter[index] = (coefcts[3] - coefcts[index - 2] * variables[index - 2] - coefcts[index - 1] * variables[index - 1]) / coefcts[index];
 		}
 		if (inter[index] <= limit && inter[index] >= -limit) {
-			isValid = true;
-			for (int i = 0; i < 3; i++) {
-				intersection[counter][i] = inter[i];
+			if (counter == 0)
+			{
+				isValid = true;
+				intersection[counter][0] = inter[0];
+				intersection[counter][1] = inter[1];
+				intersection[counter][2] = inter[2];
+			}
+			else
+			{
+				for (int i = 0; i < counter; i++) 
+				{
+					int j = 0;
+					while (true)
+					{
+						if (intersection[counter][j] == inter[j])
+						{
+							if (j == 2)
+							{
+								return isValid;
+							}
+							else
+							{
+								j++;
+							}
+						}
+						else 
+							break;
+					}
+				}
+				isValid = true;
+				intersection[counter][0] = inter[0];
+				intersection[counter][1] = inter[1];
+				intersection[counter][2] = inter[2];
 			}
 		}
 		return isValid;
@@ -228,26 +275,24 @@ private:
 
 
 
-int equation()
+void equation()
 {
 	Input input;
 	input.convert2matrix(equation1, equation2, equation3);
 
-	Vertex test;
-	int num;
-	num = test.findIntersections(argumentedMatrix[0]);
+	Vertex vertices;
+	int num; //有效交点的数量
+	num = vertices.findIntersections(argumentedMatrix[0]);
 
 	for (int i = 0; i < num; i++)
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			cout << test.intersection[i][j] << ',';
+			cout << vertices.intersection[i][j] << ',';
 
 		}
 		cout << endl;
 	}
-
-	return 0;
 }
 
 
@@ -285,7 +330,7 @@ int main()
 
 	equation();
 
-	float vertices[] = {
+	float ver[] = {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
 		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -328,6 +373,7 @@ int main()
 		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
+	float *vertices = ver;
 
 	glm::vec3 cubePositions[] = {
 		glm::vec3( 0.0f,  0.0f,  0.0f),
@@ -349,7 +395,7 @@ int main()
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 180, vertices, GL_DYNAMIC_DRAW);
 
 	//position attributes
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);

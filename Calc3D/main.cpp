@@ -248,10 +248,11 @@ private:
 					int j = 0;
 					while (true)
 					{
-						if (intersection[counter][j] == inter[j])
+						if (intersection[i][j] == inter[j])
 						{
 							if (j == 2)
 							{
+								isValid = false;
 								return isValid;
 							}
 							else

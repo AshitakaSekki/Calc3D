@@ -7,8 +7,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <learnopengl/shader_m.h>
-#include <learnopengl/camera.h>
+#include <opengl/shader_m.h>
+#include <opengl/camera.h>
+#include "Vector3.h"
 
 #include <iostream>
 #include <string>
@@ -45,9 +46,6 @@ float argumentedMatrix[N][4];	//增广矩阵
 
 float sortedVertices[4 * 3]; //排序后三角形顶点（最多4个三角形，每个三角形3个顶点）
 
-class Vector3;
-float dot(Vector3 v1, Vector3 v2);
-float cosAngle(Vector3 v1, Vector3 v2);
 
 template <class Type>
 Type stringToNum(const string& str)
@@ -58,46 +56,9 @@ Type stringToNum(const string& str)
 	return num;
 }
 
-//三维向量
-class Vector3
-{
-public:
-	Vector3();
-	Vector3(float x, float y, float z);
-	Vector3(float beginPoint[3], float endPoint[3]);
-	Vector3(float point[3]);
-	float x, y, z, length; //坐标及模长
 
-private:
-	void Length()
-	{
-		length = sqrt(x * x + y * y + z * z);
-	}
-};
-//无参数构造函数
-Vector3::Vector3()
-{
 
-}
 
-//用坐标构造向量
-Vector3::Vector3(float _x, float _y, float _z) :x(_x), y(_y), z(_z)
-{
-	Length();
-}
-//用起始点构造向量
-Vector3::Vector3(float beginPoint[3], float endPoint[3])
-{
-	x = endPoint[0] - beginPoint[0];
-	y = endPoint[1] - beginPoint[1];
-	z = endPoint[2] - beginPoint[2];
-	Length();
-}
-//点坐标
-Vector3::Vector3(float point[3]) :x(point[0]), y(point[1]), z(point[2])
-{
-	length = 0;
-}
 
 class Input
 {

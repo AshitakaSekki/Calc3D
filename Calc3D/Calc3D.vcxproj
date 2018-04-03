@@ -30,6 +30,9 @@
     <Image Include="resources\textures\awesomeface.png" />
     <Image Include="resources\textures\container.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Vector3.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{A145E876-7D0E-41F4-8CFF-E34C24BFB81A}</ProjectGuid>

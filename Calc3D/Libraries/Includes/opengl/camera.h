@@ -9,8 +9,10 @@
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
-    FORWARD,
-    BACKWARD,
+	FORWARD,
+	BACKWARD,
+	UP,
+	DOWN,
     LEFT,
     RIGHT
 };
@@ -102,15 +104,31 @@ public:
         updateCameraVectors();
     }
 
+	void ProcessMouseDrag(Camera_Movement direction, float deltaPosition)
+	{
+		float velocity = 0.05f * SENSITIVTY * deltaPosition;
+		if (direction == UP)
+			Position += Up * velocity;
+		if (direction == DOWN)
+			Position -= Up * velocity;
+		if (direction == LEFT)
+			Position -= Right * velocity;
+		if (direction == RIGHT)
+			Position += Right * velocity;
+	}
+
     // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
-    void ProcessMouseScroll(float yoffset)
+	void ProcessMouseScroll(float xoffset, float yoffset)
     {
-        if (Zoom >= 1.0f && Zoom <= 45.0f)
-            Zoom -= yoffset;
-        if (Zoom <= 1.0f)
-            Zoom = 1.0f;
-        if (Zoom >= 45.0f)
-            Zoom = 45.0f;
+        //if (Zoom >= 1.0f && Zoom <= 45.0f)
+        //    Zoom -= yoffset;
+        //if (Zoom <= 1.0f)
+        //    Zoom = 1.0f;
+        //if (Zoom >= 45.0f)
+        //    Zoom = 45.0f;
+
+		Position += Front * xoffset;
+		Position -= Front * yoffset;
     }
 
 private:

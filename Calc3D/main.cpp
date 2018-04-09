@@ -303,7 +303,7 @@ int main()
 
 	Shader ourShader("7.4.camera.vs", "7.4.camera.fs");
 
-	equation();
+	//equation();
 
 	float ver[] = {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -436,6 +436,8 @@ int main()
 		glfwPollEvents();
 		ImGui_ImplGlfwGL3_NewFrame();
 
+		processInput(window);
+
 		// 1. Show a simple window.
 		// Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets automatically appears in a window called "Debug".
 		{
@@ -474,8 +476,6 @@ int main()
 		}
 
 
-		processInput(window);
-
 		//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
@@ -490,6 +490,7 @@ int main()
 		ourShader.use();
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		//glm::mat4 projection = glm::ortho(0.0f, (float)SCR_WIDTH, (float)SCR_HEIGHT, 0.0f, 0.1f, 100.0f);
 		ourShader.setMat4("projection", projection);
 
 		glm::mat4 view = camera.GetViewMatrix();
@@ -528,16 +529,6 @@ void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-
-	float cameraSpeed = 2.5f*deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -554,16 +545,27 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 		firstMouse = false;
 	}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates rang from bottom to top
-	
+	float xoffset = lastX - xpos;
+	float yoffset = ypos - lastY; // reversed since y-coordinates rang from bottom to top
+
 	lastX = xpos;
 	lastY = ypos;
 
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	{
+		camera.ProcessMouseMovement(xoffset, yoffset);
+	}
+
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	{
+		camera.ProcessMouseDrag(UP, yoffset);
+		camera.ProcessMouseDrag(RIGHT, xoffset);
+	}
+
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	camera.ProcessMouseScroll(yoffset);
+	camera.ProcessMouseScroll(xoffset, yoffset);
+	cout << "success" << endl;
 }

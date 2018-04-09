@@ -11,6 +11,9 @@
 #include <opengl/camera.h>
 #include "Vector3.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw_gl3.h"
+
 #include <iostream>
 #include <string>
 #include <cctype>
@@ -278,7 +281,7 @@ int main()
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{

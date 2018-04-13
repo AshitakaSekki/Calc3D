@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="7.4.camera.fs" />
-    <None Include="7.4.camera.vs" />
+    <None Include="coordFrame.fs" />
+    <None Include="coordFrame.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />

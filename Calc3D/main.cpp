@@ -25,6 +25,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 
+void rotation(float xoffset, float yoffset);
+
 const unsigned int SCR_WIDTH = 1600;
 const unsigned int SCR_HEIGHT = 900;
 
@@ -38,9 +40,7 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-using namespace std;
-
-string equation1, equation2, equation3;
+std::string equation1, equation2, equation3;
 const int N = 1; //·½³Ì×éÎ¬¶È
 
 float Limitaion = 5.0f; //¾ØĞÎ¿ò±ß½ç
@@ -51,9 +51,9 @@ float sortedVertices[4 * 3]; //ÅÅĞòºóÈı½ÇĞÎ¶¥µã£¨×î¶à4¸öÈı½ÇĞÎ£¬Ã¿¸öÈı½ÇĞÎ3¸ö¶¥µ
 
 
 template <class Type>
-Type stringToNum(const string& str)
+Type stringToNum(const std::string& str)
 {
-	istringstream iss(str);
+	std::istringstream iss(str);
 	Type num;
 	iss >> num;
 	return num;
@@ -69,10 +69,10 @@ public:
 	Input();
 
 	//½«ÊäÈëµÄÊıÑ§¸ñÊ½µÄÏßĞÔ·½³Ì×é×ª»¯ÎªÔö¹ã¾ØÕó
-	void convert2matrix(string row1, string row2, string row3)
+	void convert2matrix(std::string row1, std::string row2, std::string row3)
 	{
-		string row; //ÔİÊ±±£´æ·½³Ì×é×Ö·û´®
-		string temp; //ÔİÊ±´æ´¢stringÀàĞÍµÄÊı×Ö
+		std::string row; //ÔİÊ±±£´æ·½³Ì×é×Ö·û´®
+		std::string temp; //ÔİÊ±´æ´¢stringÀàĞÍµÄÊı×Ö
 		int i = 0; //ÍâÑ­»·
 		int j = 0; //ÄÚÑ­»·
 		for (i = 0; i < N; i++)
@@ -118,19 +118,19 @@ public:
 			//½«ÄÚÑ­»·¸´Î»
 			j = 0;
 
-			cout << argumentedMatrix[i][0] << '\t';
-			cout << argumentedMatrix[i][1] << '\t';
-			cout << argumentedMatrix[i][2] << '\t';
-			cout << argumentedMatrix[i][3] << '\t' << endl;
+			std::cout << argumentedMatrix[i][0] << '\t';
+			std::cout << argumentedMatrix[i][1] << '\t';
+			std::cout << argumentedMatrix[i][2] << '\t';
+			std::cout << argumentedMatrix[i][3] << '\t' << std::endl;
 		}
 	}
 };
 
 Input::Input()
 {
-	cout << "ÇëÊäÈë·½³Ì×é" << endl;
-	cout << "·½³Ì1£º";
-	cin >> equation1;
+	std::cout << "ÇëÊäÈë·½³Ì×é" << std::endl;
+	std::cout << "·½³Ì1£º";
+	std::cin >> equation1;
 	//cout << "·½³Ì2£º";
 	//cin >> equation2;
 	//cout << "·½³Ì3£º";
@@ -253,13 +253,12 @@ void equation()
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			cout << vertices.intersection[i][j] << ',';
+			std::cout << vertices.intersection[i][j] << ',';
 
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 }
-
 
 int main()
 {
@@ -276,6 +275,7 @@ int main()
 		glfwTerminate();
 		return -1;
 	}
+
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1); //¿ªÆô´¹Ö±Í¬²½
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -301,7 +301,7 @@ int main()
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	Shader ourShader("7.4.camera.vs", "7.4.camera.fs");
+	Shader coordFrame("coordFrame.vs", "coordFrame.fs");
 
 	//equation();
 
@@ -350,18 +350,7 @@ int main()
 	};
 	float *vertices = ver;
 
-	glm::vec3 cubePositions[] = {
-		glm::vec3( 0.0f,  0.0f,  0.0f),
-		glm::vec3( 2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3( 2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3( 1.3f, -2.0f, -2.5f),
-		glm::vec3( 1.5f,  2.0f, -2.5f),
-		glm::vec3( 1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
+	glm::vec3 cubePositions(0.0f, 0.0f, 0.0f);
 
 	unsigned int VBO, VAO;
 	glGenVertexArrays(1, &VAO);
@@ -423,9 +412,9 @@ int main()
 	}
 	stbi_image_free(data);
 
-	ourShader.use();
-	ourShader.setInt("texture1", 0);
-	ourShader.setInt("texture2", 1);
+	coordFrame.use();
+	coordFrame.setInt("texture1", 0);
+	coordFrame.setInt("texture2", 1);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -487,32 +476,30 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		// render the triangle
-		ourShader.use();
+		coordFrame.use();
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		//glm::mat4 projection = glm::ortho(0.0f, (float)SCR_WIDTH, (float)SCR_HEIGHT, 0.0f, 0.1f, 100.0f);
-		ourShader.setMat4("projection", projection);
+		coordFrame.setMat4("projection", projection);
+
+		int a;
 
 		glm::mat4 view = camera.GetViewMatrix();
-		ourShader.setMat4("view", view);
+		coordFrame.setMat4("view", view);
 
 		glBindVertexArray(VAO);
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			glm::mat4 model;
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			ourShader.setMat4("model", model);
 
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		glm::mat4 model;
+		model = glm::translate(model, cubePositions);
+		coordFrame.setMat4("model", model);
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(window);
-		glfwPollEvents();
+		//glfwPollEvents();
 	}
 
 	glDeleteVertexArrays(1, &VAO);
@@ -564,8 +551,13 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 }
 
+void rotation(float xoffset, float yoffset)
+{
+	
+}
+
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	camera.ProcessMouseScroll(xoffset, yoffset);
-	cout << "success" << endl;
+	camera.ProcessMouseScroll(yoffset);
+	std::cout << "success" << std::endl;
 }

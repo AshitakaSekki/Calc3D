@@ -118,17 +118,17 @@ public:
 	}
 
     // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
-	void ProcessMouseScroll(float xoffset, float yoffset)
+	void ProcessMouseScroll(float yoffset)
     {
-        //if (Zoom >= 1.0f && Zoom <= 45.0f)
-        //    Zoom -= yoffset;
-        //if (Zoom <= 1.0f)
-        //    Zoom = 1.0f;
-        //if (Zoom >= 45.0f)
-        //    Zoom = 45.0f;
+        if (Zoom >= 1.0f && Zoom <= 45.0f)
+            Zoom -= yoffset;
+        if (Zoom <= 1.0f)
+            Zoom = 1.0f;
+        if (Zoom >= 45.0f)
+            Zoom = 45.0f;
 
-		Position += Front * xoffset;
-		Position -= Front * yoffset;
+		//Position += Front * xoffset;
+		//Position -= Front * yoffset;
     }
 
 private:

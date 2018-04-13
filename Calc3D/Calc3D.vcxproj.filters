@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="7.4.camera.fs">
+    <None Include="coordFrame.fs">
       <Filter>源文件</Filter>
     </None>
-    <None Include="7.4.camera.vs">
+    <None Include="coordFrame.vs">
       <Filter>源文件</Filter>
     </None>
   </ItemGroup>
